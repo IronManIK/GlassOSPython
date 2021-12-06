@@ -21,80 +21,79 @@ print (os.getcwd())
 #geting data
 tempArray = w.temperature('fahrenheit')
 
-def main():
 
+win = GraphWin("script", 240, 240, autoflush= False)
+win.setBackground(color_rgb(0, 0, 0))
+#  \/-------- UNCOMMENT THIS BEFORE RUNNING ON RPi
+#os.system("wmctrl -r script -e 0,198,90,-1,-1") 
+
+#get initial time setting data and set the array
+timeArray = time.localtime()
+#print(timeArray)n
+hour = str(timeArray[3] - 12)
+minute = str(timeArray [4])
+second = str(timeArray [5])
+hourInt = 0
+
+def drawCirclePie(x, y, angle, radius, color):
+   drawAngle = 0
+   while(drawAngle <= angle):
+      drawDrawAngle = drawAngle + 90
+      tri = Polygon (Point (x,y), Point (x + (math.cos(math.radians(drawDrawAngle)) * radius), y + (math.sin(math.radians(drawDrawAngle)) * radius)), Point (x + (math.cos(math.radians(drawDrawAngle+8)) * radius), y + (math.sin(math.radians(drawDrawAngle+8)) * radius)))
+      tri.setFill (color)
+      tri.setOutline (color)
+      tri.draw(win)
+      drawAngle = drawAngle + 8
+   pieCover.draw(win)
+   update()
+
+#program to create background and init pie cover
+background = Image(Point(120,120), (os.getcwd() + "/" + "imageback.png"))
+background.draw(win)
+pieCover = Image(Point(120,120), (os.getcwd() + "/" + "imagefront.png"))
+
+#make text for time (and set color, size, and position [point])
+timeText = Text(Point (106, 40), hour + "" + minute + "" + second)
+timeText.setTextColor("white")
+timeText.setSize(28)
+timeText.draw (win)
+
+#make text for time (and set color, size, and position [point])
+timeTextSec = Text(Point (155, 44.7), hour + "" + minute + "" + second)
+timeTextSec.setTextColor("white")
+timeTextSec.setSize(15)
+timeTextSec.draw (win)
+
+#make text for weather
+tempText = Text(Point (216, 178), str(round(tempArray['temp'])) + u"\N{DEGREE SIGN}")
+tempText.setTextColor("white")
+tempText.setSize(22)
+tempText.draw (win)
+
+#make text for cpu temperature
+cpuTempText = Text(Point (172, 209), "load")
+cpuTempText.setTextColor("white")
+cpuTempText.setSize(16)
+cpuTempText.draw (win)
+
+def clearCirclePie(win):
+   for item in win.items[:]:
+      if "Polygon" in str(item):
+         item.undraw()
+
+#testing circle drawing
+testAngle = 0
+while (testAngle < 360):
+   clearCirclePie(win)
+   pieCover.undraw()
+   drawCirclePie (45, 187, testAngle, 43, "white")
+   testAngle = testAngle + 8
+   time.sleep (0.005)
+
+
+def main():
    movedForDouble = True
    movedForSingle = False
-   
-   win = GraphWin("script", 240, 240, autoflush= False)
-   win.setBackground(color_rgb(0, 0, 0))
-   #  \/-------- UNCOMMENT THIS BEFORE RUNNING ON RPi
-   #os.system("wmctrl -r script -e 0,198,90,-1,-1") 
-   
-   #get initial time setting data and set the array
-   timeArray = time.localtime()
-   #print(timeArray)n
-   hour = str(timeArray[3] - 12)
-   minute = str(timeArray [4])
-   second = str(timeArray [5])
-   hourInt = 0
-
-   def drawCirclePie(x, y, angle, radius, color):
-      drawAngle = 0
-      while(drawAngle <= angle):
-         drawDrawAngle = drawAngle + 90
-         tri = Polygon (Point (x,y), Point (x + (math.cos(math.radians(drawDrawAngle)) * radius), y + (math.sin(math.radians(drawDrawAngle)) * radius)), Point (x + (math.cos(math.radians(drawDrawAngle+8)) * radius), y + (math.sin(math.radians(drawDrawAngle+8)) * radius)))
-         tri.setFill (color)
-         tri.setOutline (color)
-         tri.draw(win)
-         drawAngle = drawAngle + 8
-      pieCover.draw(win)
-      update()
-
-   #program to create background and init pie cover
-   background = Image(Point(120,120), (os.getcwd() + "/" + "imageback.png"))
-   background.draw(win)
-   pieCover = Image(Point(120,120), (os.getcwd() + "/" + "imagefront.png"))
-
-   #make text for time (and set color, size, and position [point])
-   timeText = Text(Point (106, 40), hour + "" + minute + "" + second)
-   timeText.setTextColor("white")
-   timeText.setSize(28)
-   timeText.draw (win)
-
-   #make text for time (and set color, size, and position [point])
-   timeTextSec = Text(Point (155, 44.7), hour + "" + minute + "" + second)
-   timeTextSec.setTextColor("white")
-   timeTextSec.setSize(15)
-   timeTextSec.draw (win)
-
-   #make text for weather
-   tempText = Text(Point (216, 178), str(round(tempArray['temp'])) + u"\N{DEGREE SIGN}")
-   tempText.setTextColor("white")
-   tempText.setSize(22)
-   tempText.draw (win)
-
-   #make text for cpu temperature
-   cpuTempText = Text(Point (172, 209), "load")
-   cpuTempText.setTextColor("white")
-   cpuTempText.setSize(16)
-   cpuTempText.draw (win)
-
-   def clearCirclePie(win):
-      for item in win.items[:]:
-         if "Polygon" in str(item):
-            item.undraw()
-
-   #testing circle drawing
-   testAngle = 0
-   while (testAngle < 360):
-      clearCirclePie(win)
-      pieCover.undraw()
-      drawCirclePie (45, 187, testAngle, 43, "white")
-      testAngle = testAngle + 8
-      time.sleep (0.005)
-
-   #program to create background
 
    while True:
       timeArray = time.localtime()
