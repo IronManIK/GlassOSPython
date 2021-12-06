@@ -7,7 +7,7 @@ from pyowm import OWM
 from pyowm.utils import config
 from pyowm.utils import timestamps
 from pyowm.weatherapi25.uris import DAILY_FORECAST_URI
-#\/----------------- UNCOMMENT THESE BEFORE RUNNING ON RPi
+#\/----------------- UNCOMMENT THESE BEFORE RUNNING ON RPi ******************************************************************************
 #from gpiozero import CPUTemperature
 #cpu = CPUTemperature()
 
@@ -24,12 +24,11 @@ tempArray = w.temperature('fahrenheit')
 
 win = GraphWin("script", 240, 240, autoflush= False)
 win.setBackground(color_rgb(0, 0, 0))
-#  \/-------- UNCOMMENT THIS BEFORE RUNNING ON RPi
+#  \/-------- UNCOMMENT THIS BEFORE RUNNING ON RPi ******************************************************************************
 #os.system("wmctrl -r script -e 0,198,90,-1,-1") 
 
 #get initial time setting data and set the array
 timeArray = time.localtime()
-#print(timeArray)n
 hour = str(timeArray[3] - 12)
 minute = str(timeArray [4])
 second = str(timeArray [5])
@@ -143,13 +142,7 @@ def main():
       timeText.setText (hour + ":" + minute)
       timeTextSec.setText (second)
 
-      #if (pmOrAm):
-      #   timeText.setText(hour + ":" + minute + ":" + second + " pm")
-      #else:
-      #   timeText.setText(hour + ":" + minute + ":" + second + " am")
-      
-      
-      #  \/-------- UNCOMMENT THIS BEFORE RUNNING ON RPi
+      #  \/-------- UNCOMMENT THIS BEFORE RUNNING ON RPi ******************************************************************************
       #cpuTempText.setText(round(cpu.temperature, 1))
       cpuTempText.setText(50.6)
       
