@@ -33,7 +33,7 @@ def main():
    
    #get initial time setting data and set the array
    timeArray = time.localtime()
-   #print(timeArray)
+   #print(timeArray)n
    hour = str(timeArray[3] - 12)
    minute = str(timeArray [4])
    second = str(timeArray [5])
@@ -52,9 +52,9 @@ def main():
       update()
 
    #program to create background and init pie cover
-   background = Image(Point(120,120), "C:/Users/TheUl/Desktop/imageback.png")
+   background = Image(Point(120,120), (os.getcwd() + "/" + "imageback.png"))
    background.draw(win)
-   pieCover = Image(Point(120,120), "C:/Users/TheUl/Desktop/imagefront.png")
+   pieCover = Image(Point(120,120), (os.getcwd() + "/" + "imagefront.png"))
 
    #make text for time (and set color, size, and position [point])
    timeText = Text(Point (106, 40), hour + "" + minute + "" + second)
