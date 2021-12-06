@@ -11,5 +11,3 @@ w = observation.weather
 
 #geting data
 tempArray = w.temperature('fahrenheit')
-
-print (tempArray)
