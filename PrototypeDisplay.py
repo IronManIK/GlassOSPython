@@ -7,19 +7,19 @@ from pyowm import OWM
 from pyowm.utils import config
 from pyowm.utils import timestamps
 from pyowm.weatherapi25.uris import DAILY_FORECAST_URI
+from WeatherAPI import *
 #\/----------------- UNCOMMENT THESE BEFORE RUNNING ON RPi ******************************************************************************
 #from gpiozero import CPUTemperature
 #cpu = CPUTemperature()
 
 #Open weather map setup
-owm = OWM('5749f333920e0129251d1758df0a622a')
-mgr = owm.weather_manager()
-observation = mgr.weather_at_coords(42.291970, -83.535480) #setting it to my house
-w = observation.weather
-print (os.getcwd())
+#owm = OWM('5749f333920e0129251d1758df0a622a')
+#mgr = owm.weather_manager()
+#observation = mgr.weather_at_coords(42.291970, -83.535480) #setting it to my house
+#w = observation.weather
 
 #geting data
-tempArray = w.temperature('fahrenheit')
+#tempArray = w.temperature('fahrenheit')
 
 
 win = GraphWin("script", 240, 240, autoflush= False)
