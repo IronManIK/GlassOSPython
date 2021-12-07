@@ -6,7 +6,9 @@ from pyowm import OWM
 from pyowm.utils import config
 from pyowm.utils import timestamps
 from pyowm.weatherapi25.uris import DAILY_FORECAST_URI
-from WeatherAPI import *
+# custom imports
+from WeatherDataFeed import *
+#from CompassDataFeed import *
 
 #\/----------------- UNCOMMENT THESE BEFORE RUNNING ON RPi ******************************************************************************
 #from gpiozero import CPUTemperature
@@ -16,6 +18,7 @@ win = GraphWin("script", 240, 240, autoflush= False)
 win.setBackground(color_rgb(0, 0, 0))
 #  \/-------- UNCOMMENT THIS BEFORE RUNNING ON RPi ******************************************************************************
 #os.system("wmctrl -r script -e 0,198,90,-1,-1") 
+
 
 #get initial time setting data and set the array
 timeArray = time.localtime()
@@ -41,14 +44,15 @@ background = Image(Point(120,120), (os.getcwd() + "/" + "imageback.png"))
 background.draw(win)
 pieCover = Image(Point(120,120), (os.getcwd() + "/" + "imagefront.png"))
 
+
 #make text for time (and set color, size, and position [point])
-timeText = Text(Point (106, 40), hour + "" + minute + "" + second)
+timeText = Text(Point (106, 70), hour + "" + minute + "" + second)
 timeText.setTextColor("white")
 timeText.setSize(28)
 timeText.draw (win)
 
 #make text for time (and set color, size, and position [point])
-timeTextSec = Text(Point (155, 44.7), hour + "" + minute + "" + second)
+timeTextSec = Text(Point (155, 74.7), hour + "" + minute + "" + second)
 timeTextSec.setTextColor("white")
 timeTextSec.setSize(15)
 timeTextSec.draw (win)
@@ -58,6 +62,7 @@ tempText = Text(Point (216, 178), str(round(tempArray['temp'])) + u"\N{DEGREE SI
 tempText.setTextColor("white")
 tempText.setSize(22)
 tempText.draw (win)
+
 
 #make text for cpu temperature
 cpuTempText = Text(Point (172, 209), "load")
@@ -83,6 +88,11 @@ while (testAngle < 360):
 def main():
    movedForDouble = True
    movedForSingle = False
+
+   #program to add compass lines
+   compassLines = Image(Point(158,140), (os.getcwd() + "/" + "Compass.png"))
+   compassLines.draw(win)
+   compassHeadingTest = 0
 
    while True:
       timeArray = time.localtime()
@@ -138,6 +148,16 @@ def main():
       
       update()
 
-      time.sleep(0.25)
+      #close program on click
+      if (win.checkMouse() != None):
+         exit()
+
+      compassLines.undraw()  
+      compassLines = Image(Point((158 - ((compassHeadingTest % 5) * 11)),140), (os.getcwd() + "/" + "Compass.png"))
+      compassLines.draw(win)
+      compassHeadingTest = compassHeadingTest + 1
+      print (compassHeadingTest)
+
+      time.sleep(0.05)
 
 main()
