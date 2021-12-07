@@ -155,9 +155,8 @@ def main():
       compassLines.undraw()  
       compassLines = Image(Point((158 - ((compassHeadingTest % 5) * 11)),140), (os.getcwd() + "/" + "Compass.png"))
       compassLines.draw(win)
-      compassHeadingTest = compassHeadingTest + 1
-      print (compassHeadingTest)
+      compassHeadingTest = compassHeadingTest + .1
 
-      time.sleep(0.05)
+      time.sleep(0.01)
 
 main()
