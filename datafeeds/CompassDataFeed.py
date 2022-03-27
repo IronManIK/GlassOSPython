@@ -1,8 +1,6 @@
-import time
+compassHeading = 0
 
-#while True:
-#    compassHeading = 0
-#
-#    while (compassHeading < 360):
-#        compassHeading = compassHeading + 0.1
-#        time.sleep(0.01)
+def CDFupdateCompass():
+    global compassHeading
+    compassHeading = compassHeading + 0.1
+    return compassHeading

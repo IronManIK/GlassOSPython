@@ -6,9 +6,15 @@ from pyowm import OWM
 from pyowm.utils import config
 from pyowm.utils import timestamps
 from pyowm.weatherapi25.uris import DAILY_FORECAST_URI
-# custom imports
+from datafeeds.CompassDataFeed import *
+# custom imports 
 from datafeeds.WeatherDataFeed import *
-#from CompassDataFeed import *
+from datafeeds.CompassDataFeed import *
+
+try:
+   tempArray = getWeather()
+except:
+   tempArray = {'temp': "?", 'temp_max': "?", 'temp_min': "?", 'feels_like': "?", 'temp_kf': "?"}
 
 #\/----------------- UNCOMMENT THESE BEFORE RUNNING ON RPi **********************************************************************
 #from gpiozero import CPUTemperature
@@ -34,7 +40,7 @@ def drawCirclePie(x, y, angle, radius, color):
       tri.setFill (color) 
       tri.setOutline (color)
       tri.draw(win)
-      drawAngle = drawAngle + 8
+      drawAngle = drawAngle + 2
    pieCover.draw(win)
    update()
 
@@ -55,11 +61,17 @@ timeTextSec.setTextColor("white")
 timeTextSec.setSize(15)
 timeTextSec.draw (win)
 
-#make text for weather
-tempText = Text(Point (216, 178), str(round(tempArray['temp'])) + u"\N{DEGREE SIGN}")
-tempText.setTextColor("white")
-tempText.setSize(22)
-tempText.draw (win)
+#make text for weather and check if it errored
+if tempArray['temp'] == "?":
+   tempText = Text(Point (216, 178), "?" + u"\N{DEGREE SIGN}")
+   tempText.setTextColor("white")
+   tempText.setSize(22)
+   tempText.draw (win)
+else:
+   tempText = Text(Point (216, 178), str(round(tempArray['temp'])) + u"\N{DEGREE SIGN}")
+   tempText.setTextColor("white")
+   tempText.setSize(22)
+   tempText.draw (win)
 
 #make text for cpu temperature
 cpuTempText = Text(Point (172, 209), "load")
@@ -87,7 +99,6 @@ movedForSingle = False
 #program to add compass lines
 compassLines = Image(Point(158,140), (os.getcwd() + "/images/" + "Compass.png"))
 compassLines.draw(win)
-compassHeadingTest = 0
 
 while True:
    timeArray = time.localtime()
@@ -147,9 +158,9 @@ while True:
    if (win.checkMouse() != None):
       exit()
 
-   compassLines.undraw()  
-   compassLines = Image(Point((158 - ((compassHeadingTest % 5) * 11)),140), (os.getcwd() + "/images/" + "Compass.png"))
+   compassLines.undraw()
+   compassHeading = CDFupdateCompass()
+   compassLines = Image(Point((158 - ((compassHeading % 5) * 11)),140), (os.getcwd() + "/images/" + "Compass.png"))
    compassLines.draw(win)
-   compassHeadingTest = compassHeadingTest + .1
 
-   time.sleep(0.01)
+   time.sleep(0.02)
