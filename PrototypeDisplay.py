@@ -6,7 +6,6 @@ from pyowm import OWM
 from pyowm.utils import config
 from pyowm.utils import timestamps
 from pyowm.weatherapi25.uris import DAILY_FORECAST_URI
-from datafeeds.CompassDataFeed import *
 # custom imports 
 from datafeeds.WeatherDataFeed import *
 from datafeeds.CompassDataFeed import *
