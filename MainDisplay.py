@@ -1,3 +1,7 @@
+from asyncore import loop
+from distutils.util import subst_vars
+from pickle import GLOBAL
+from tracemalloc import start
 from graphics import *
 import time
 import os
@@ -35,11 +39,11 @@ def drawCirclePie(x, y, angle, radius, color):
    drawAngle = 0
    while(drawAngle <= angle):
       drawDrawAngle = drawAngle + 90
-      tri = Polygon (Point (x,y), Point (x + (math.cos(math.radians(drawDrawAngle)) * radius), y + (math.sin(math.radians(drawDrawAngle)) * radius)), Point (x + (math.cos(math.radians(drawDrawAngle+8)) * radius), y + (math.sin(math.radians(drawDrawAngle+8)) * radius)))
+      tri = Polygon (Point (x,y), Point (x + (math.cos(math.radians(drawDrawAngle)) * radius), y + (math.sin(math.radians(drawDrawAngle)) * radius)), Point (x + (math.cos(math.radians(drawDrawAngle+4)) * radius), y + (math.sin(math.radians(drawDrawAngle+4)) * radius)))
       tri.setFill (color) 
       tri.setOutline (color)
       tri.draw(win)
-      drawAngle = drawAngle + 2
+      drawAngle = drawAngle + 4
    pieCover.draw(win)
    update()
 
@@ -83,14 +87,8 @@ def clearCirclePie(win):
       if "Polygon" in str(item):
          item.undraw()
 
-#testing circle drawing
-testAngle = 0
-while (testAngle < 360):
-   clearCirclePie(win)
-   pieCover.undraw()
-   drawCirclePie(45, 187, testAngle, 43, "white")
-   testAngle = testAngle + 8
-   time.sleep(0.005)
+
+drawCirclePie (45, 187, 360, 43, "white")
 
 movedForDouble = True
 movedForSingle = False
@@ -99,7 +97,13 @@ movedForSingle = False
 compassLines = Image(Point(158,140), (os.getcwd() + "/images/" + "Compass.png"))
 compassLines.draw(win)
 
-while True:
+#to repeat every 20 milliseconds
+def periodicFunctions():
+   global movedForDouble
+   global movedForSingle
+   global compassLines
+   global loopTime
+
    timeArray = time.localtime()
    
    hourInt = timeArray[3]
@@ -162,4 +166,40 @@ while True:
    compassLines = Image(Point((158 - ((compassHeading % 5) * 11)),140), (os.getcwd() + "/images/" + "Compass.png"))
    compassLines.draw(win)
 
-   time.sleep(0.02)
+   clearCirclePie(win)
+   pieCover.undraw()
+   drawCirclePie(45, 187, (loopTime / 0.02) * 360, 43, "white")
+
+#to repeat every 10 seconds (like api updates can go here)
+def tenSecondFunctions():
+   print ("ran 10 second functions")
+
+startTime = time.time()
+nextTwentyMili = startTime
+nextTenMili = startTime
+
+loopTime = 0
+
+while True:
+   #if the time has passed 20 milliseconds from the last check, run periodic
+   if time.time() > nextTwentyMili:
+      periodicFunctions()
+
+      #looptime tracking
+      loopTime = time.time() - nextTwentyMili
+
+      nextTwentyMili = nextTwentyMili + 0.02
+
+      #compensation for lag
+      if loopTime > 0.02:
+         if loopTime > 0.1:
+            print ("Warning - loop running ultra slow! (" + str(round(loopTime, 4) * 1000) + " miliseconds) Compensating by waiting 2 seconds")
+            nextTwentyMili = time.time() + 2
+         else:
+            print ("Warning - loop running slow! (" + str(round(loopTime, 4) * 1000) + " miliseconds) Compensating by waiting 0.5 seconds")
+            nextTwentyMili = time.time() + 0.5
+
+   #if the time has passed 10 seconds from the last check, run the 10 second functions
+   if time.time() > nextTenMili:
+      tenSecondFunctions()
+      nextTenMili = nextTenMili + 10
