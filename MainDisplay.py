@@ -14,6 +14,8 @@ from pyowm.weatherapi25.uris import DAILY_FORECAST_URI
 from datafeeds.WeatherDataFeed import *
 from datafeeds.CompassDataFeed import *
 
+startTime = time.time()
+
 try:
    tempArray = getWeather()
 except:
@@ -48,36 +50,36 @@ def drawCirclePie(x, y, angle, radius, color):
    update()
 
 #program to create background and init pie cover
-background = Image(Point(120,120), (os.getcwd() + "/images/" + "imageback.png"))
+background = Image(Point(120,120), (os.getcwd() + "/images/" + "glassOSBackgroundReal.png"))
 background.draw(win)
-pieCover = Image(Point(120,120), (os.getcwd() + "/images/" + "imagefront.png"))
+pieCover = Image(Point(120, 120), (os.getcwd() + "/images/" + "imagefrontreal.png"))
 
 #make text for time (and set color, size, and position [point])
-timeText = Text(Point (106, 70), hour + "" + minute + "" + second)
+timeText = Text(Point (96, 215), hour + "" + minute + "" + second)
 timeText.setTextColor("white")
 timeText.setSize(28)
 timeText.draw (win)
 
 #make text for time (and set color, size, and position [point])
-timeTextSec = Text(Point (155, 74.7), hour + "" + minute + "" + second)
+timeTextSec = Text(Point (146, 219.7), hour + "" + minute + "" + second)
 timeTextSec.setTextColor("white")
 timeTextSec.setSize(15)
 timeTextSec.draw (win)
 
 #make text for weather and check if it errored
 if tempArray['temp'] == "?":
-   tempText = Text(Point (216, 178), "?" + u"\N{DEGREE SIGN}")
+   tempText = Text(Point (207, 209), "?" + u"\N{DEGREE SIGN}")
    tempText.setTextColor("white")
-   tempText.setSize(22)
+   tempText.setSize(24)
    tempText.draw (win)
 else:
-   tempText = Text(Point (216, 178), str(round(tempArray['temp'])) + u"\N{DEGREE SIGN}")
+   tempText = Text(Point (207, 209), str(round(tempArray['temp'])) + u"\N{DEGREE SIGN}")
    tempText.setTextColor("white")
-   tempText.setSize(22)
+   tempText.setSize(24)
    tempText.draw (win)
 
 #make text for cpu temperature
-cpuTempText = Text(Point (172, 209), "load")
+cpuTempText = Text(Point (205, 32), "load")
 cpuTempText.setTextColor("white")
 cpuTempText.setSize(16)
 cpuTempText.draw (win)
@@ -88,7 +90,7 @@ def clearCirclePie(win):
          item.undraw()
 
 
-drawCirclePie (45, 187, 360, 43, "white")
+drawCirclePie (163, 120, 360, 55, "white")
 
 movedForDouble = True
 movedForSingle = False
@@ -102,7 +104,7 @@ def periodicFunctions():
    global movedForDouble
    global movedForSingle
    global compassLines
-   global loopTime
+   global spikeCount
 
    timeArray = time.localtime()
    
@@ -141,7 +143,7 @@ def periodicFunctions():
       second = "0" + second
    else:
       second = str(timeArray [5])
-      
+
    if (minute < 10):
       minute = str(timeArray [4])
       minute = "0" + minute
@@ -159,47 +161,27 @@ def periodicFunctions():
 
    #close program on click
    if (win.checkMouse() != None):
+      print ("Program runtime: " + str(time.time()-startTime) + " seconds")
       exit()
 
    compassLines.undraw()
    compassHeading = CDFupdateCompass()
-   compassLines = Image(Point((158 - ((compassHeading % 5) * 11)),140), (os.getcwd() + "/images/" + "Compass.png"))
+   compassLines = Image(Point((158 - ((compassHeading % 5) * 11)),113), (os.getcwd() + "/images/" + "Compass.png"))
    compassLines.draw(win)
-
-   clearCirclePie(win)
-   pieCover.undraw()
-   drawCirclePie(45, 187, (loopTime / 0.02) * 360, 43, "white")
 
 #to repeat every 10 seconds (like api updates can go here)
 def tenSecondFunctions():
    print ("ran 10 second functions")
 
-startTime = time.time()
-nextTwentyMili = startTime
-nextTenMili = startTime
+nextRunTime = time.time()
 
-loopTime = 0
+spikeCount = 0
 
 while True:
-   #if the time has passed 20 milliseconds from the last check, run periodic
-   if time.time() > nextTwentyMili:
-      periodicFunctions()
-
-      #looptime tracking
-      loopTime = time.time() - nextTwentyMili
-
-      nextTwentyMili = nextTwentyMili + 0.02
-
-      #compensation for lag
-      if loopTime > 0.02:
-         if loopTime > 0.1:
-            print ("Warning - loop running ultra slow! (" + str(round(loopTime, 4) * 1000) + " miliseconds) Compensating by waiting 2 seconds")
-            nextTwentyMili = time.time() + 2
-         else:
-            print ("Warning - loop running slow! (" + str(round(loopTime, 4) * 1000) + " miliseconds) Compensating by waiting 0.5 seconds")
-            nextTwentyMili = time.time() + 0.5
+   
+   periodicFunctions()
 
    #if the time has passed 10 seconds from the last check, run the 10 second functions
-   if time.time() > nextTenMili:
+   if time.time() > nextRunTime:
       tenSecondFunctions()
-      nextTenMili = nextTenMili + 10
+      nextRunTime = nextRunTime + 10

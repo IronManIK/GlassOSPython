@@ -3,7 +3,6 @@ from pyowm.utils import config
 from pyowm.utils import timestamps
 from pyowm.weatherapi25.uris import DAILY_FORECAST_URI
 
-
 def getWeather():
     #Open weather map setup
     owm = OWM('5749f333920e0129251d1758df0a622a')
